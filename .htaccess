@@ -1,0 +1,20 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # Force SSL
+    RewriteCond %{HTTPS} !=on
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+    # Forward requests to Uvicorn
+    RewriteRule ^(.*)$ http://127.0.0.1:8000/$1 [P,L]
+</IfModule>
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION BEGIN
+PassengerAppRoot "/home/instabee/msb.instabee.pro"
+PassengerBaseURI "/"
+PassengerPython "/home/instabee/virtualenv/msb.instabee.pro/3.9/bin/python"
+
+PassengerAppType wsgi
+PassengerStartupFile app.main:app
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION END
+# DO NOT REMOVE OR MODIFY. CLOUDLINUX ENV VARS CONFIGURATION BEGIN
+<IfModule Litespeed>
+</IfModule>
+# DO NOT REMOVE OR MODIFY. CLOUDLINUX ENV VARS CONFIGURATION END

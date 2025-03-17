@@ -1,0 +1,159 @@
+/home/instabee/virtualenv/msb.instabee.pro/3.9/lib/python3.9/site-packages/pydantic/_internal/_config.py:345: UserWarning: Valid config keys have changed in V2:
+* 'orm_mode' has been renamed to 'from_attributes'
+  warnings.warn(message, UserWarning)
+INFO:     Started server process [1509497]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     49.43.218.228:0 - "POST /auth/login HTTP/1.1" 200 OK
+INFO:     104.166.80.9:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     104.166.80.240:0 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     104.152.52.74:59184 - "GET / HTTP/1.0" 404 Not Found
+INFO:     104.152.52.74:36156 - "GET /nice%20ports%2C/Trinity.txt.bak HTTP/1.0" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     104.152.52.74:36180 - "OPTIONS / HTTP/1.0" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     64.15.129.121:0 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     192.175.111.244:0 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     165.231.141.126:0 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     68.183.245.101:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     165.231.141.126:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     165.231.141.126:0 - "GET /JsQBgGesIuS HTTP/1.1" 404 Not Found
+INFO:     34.209.44.24:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     165.231.141.126:0 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     95.181.236.148:56570 - "GET / HTTP/1.1" 404 Not Found
+INFO:     37.46.115.54:37102 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     205.210.31.60:64930 - "GET / HTTP/1.1" 404 Not Found
+INFO:     84.239.42.138:53054 - "GET / HTTP/1.1" 404 Not Found
+INFO:     173.244.33.7:52198 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     193.9.35.13:2902 - "GET / HTTP/1.1" 404 Not Found
+INFO:     178.132.111.29:14012 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     91.90.120.4:51944 - "GET / HTTP/1.1" 404 Not Found
+INFO:     82.197.78.26:27461 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     146.19.156.123:54308 - "GET / HTTP/1.1" 404 Not Found
+INFO:     138.199.63.99:58140 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     193.142.103.209:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     188.241.249.154:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     35.164.170.136:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     62.133.47.140:46350 - "GET / HTTP/1.1" 404 Not Found
+INFO:     146.70.238.149:8725 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     35.164.170.136:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     159.223.113.186:36882 - "GET / HTTP/1.1" 404 Not Found
+INFO:     159.223.113.186:48254 - "GET / HTTP/1.1" 404 Not Found
+INFO:     159.223.113.186:48266 - "GET / HTTP/1.1" 404 Not Found
+INFO:     193.56.113.32:0 - "GET /wp-includes/ID3/license.txt HTTP/1.1" 404 Not Found
+INFO:     193.56.113.32:0 - "GET /feed/ HTTP/1.1" 404 Not Found
+INFO:     193.56.113.32:0 - "GET /xmlrpc.php?rsd HTTP/1.1" 404 Not Found
+INFO:     193.56.113.32:0 - "GET /blog/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     193.56.113.32:0 - "GET /web/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     193.56.113.32:0 - "GET /wordpress/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     193.56.113.32:0 - "GET /wp/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     193.56.113.32:0 - "GET /2020/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     193.56.113.32:0 - "GET /2019/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     193.56.113.32:0 - "GET /2021/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     193.56.113.32:0 - "GET /shop/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     193.56.113.32:0 - "GET /wp1/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     193.56.113.32:0 - "GET /test/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     193.56.113.32:0 - "GET /site/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     193.56.113.32:0 - "GET /cms/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     146.70.11.12:36024 - "GET / HTTP/1.1" 404 Not Found
+INFO:     37.46.115.54:40310 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     173.239.217.10:42652 - "GET / HTTP/1.1" 404 Not Found
+INFO:     188.126.88.14:42654 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     146.19.156.123:64681 - "GET / HTTP/1.1" 404 Not Found
+INFO:     87.249.132.28:51192 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     146.70.65.10:46464 - "GET / HTTP/1.1" 404 Not Found
+INFO:     45.154.155.29:46476 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     146.70.65.15:38896 - "GET / HTTP/1.1" 404 Not Found
+INFO:     146.70.39.7:38908 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     146.70.65.10:53688 - "GET / HTTP/1.1" 404 Not Found
+INFO:     173.244.49.23:53700 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     104.232.194.225:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     136.0.100.244:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     104.194.200.207:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     104.194.200.119:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     159.148.54.118:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     159.148.54.118:0 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     85.254.84.38:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     85.254.84.38:0 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     47.245.107.206:53260 - "GET /.env HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     178.128.165.202:41110 - "GET / HTTP/1.1" 404 Not Found
+INFO:     178.128.165.202:41120 - "GET /login HTTP/1.1" 404 Not Found
+INFO:     167.94.145.111:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     128.199.153.155:0 - "GET /wp-admin/setup-config.php?step=1 HTTP/1.1" 404 Not Found
+INFO:     128.199.153.155:0 - "GET /wordpress/wp-admin/setup-config.php?step=1 HTTP/1.1" 404 Not Found
+INFO:     133.242.174.119:0 - "GET /robots.txt HTTP/1.1" 404 Not Found
+INFO:     133.242.174.119:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     132.145.29.111:0 - "GET /wp-includes/ID3/license.txt HTTP/1.1" 404 Not Found
+INFO:     132.145.29.111:0 - "GET /feed/ HTTP/1.1" 404 Not Found
+INFO:     132.145.29.111:0 - "GET /xmlrpc.php?rsd HTTP/1.1" 404 Not Found
+INFO:     132.145.29.111:0 - "GET /blog/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     132.145.29.111:0 - "GET /web/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     132.145.29.111:0 - "GET /wordpress/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     132.145.29.111:0 - "GET /wp/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     132.145.29.111:0 - "GET /wp/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     132.145.29.111:0 - "GET /2020/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     132.145.29.111:0 - "GET /2020/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     132.145.29.111:0 - "GET /2019/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     132.145.29.111:0 - "GET /2019/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     132.145.29.111:0 - "GET /2021/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     132.145.29.111:0 - "GET /2021/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     132.145.29.111:0 - "GET /shop/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     132.145.29.111:0 - "GET /shop/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     132.145.29.111:0 - "GET /wp1/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     132.145.29.111:0 - "GET /test/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     132.145.29.111:0 - "GET /site/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     132.145.29.111:0 - "GET /cms/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     198.235.24.24:63748 - "GET / HTTP/1.1" 404 Not Found
+INFO:     198.235.24.24:63736 - "GET / HTTP/1.1" 404 Not Found
+INFO:     198.235.24.27:64468 - "GET / HTTP/1.1" 404 Not Found
+/var/Projects/Msb_dev/venv/lib/python3.12/site-packages/pydantic/_internal/_config.py:345: UserWarning: Valid config keys have changed in V2:
+* 'orm_mode' has been renamed to 'from_attributes'
+  warnings.warn(message, UserWarning)
+INFO:     Started server process [368602]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:5566 (Press CTRL+C to quit)
+INFO:     49.43.218.228:49646 - "GET /docs HTTP/1.1" 200 OK
+INFO:     49.43.218.228:49646 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     27.6.132.14:57394 - "GET / HTTP/1.1" 200 OK
+INFO:     49.43.218.228:51240 - "GET / HTTP/1.1" 200 OK
+INFO:     49.43.218.228:51240 - "GET /docs HTTP/1.1" 200 OK
+INFO:     49.43.218.228:51240 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     27.6.132.14:57397 - "GET /docs HTTP/1.1" 200 OK
+INFO:     27.6.132.14:57397 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     49.43.218.228:35900 - "GET /masters/all HTTP/1.1" 200 OK
+INFO:     27.6.132.14:57402 - "GET /masters/all HTTP/1.1" 200 OK
+INFO:     49.43.218.228:52288 - "GET /masters/all HTTP/1.1" 200 OK
+INFO:     27.6.132.14:57406 - "POST /pre/login HTTP/1.1" 200 OK
+Headers({'host': '74.208.221.19:5566', 'connection': 'keep-alive', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36', 'accept': 'application/json', 'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtb25pc2h2ZEBnbWFpbC5jb20iLCJleHAiOjE3MzgzODcxMDR9.LniwJuuw0KdtGLTV9cDEEsfMMD-8mB1kqw0X6i_wVj4', 'referer': 'http://74.208.221.19:5566/docs', 'accept-encoding': 'gzip, deflate', 'accept-language': 'en-US,en;q=0.9'})
+INFO:     27.6.132.14:57407 - "GET /auth/me HTTP/1.1" 200 OK
+INFO:     27.6.132.14:57417 - "GET /student/get-students?page=1&limit=10 HTTP/1.1" 200 OK
+INFO:     27.6.132.14:57419 - "GET /school/dashboard/15 HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [368602]
+/var/Projects/Msb_dev/venv/lib/python3.12/site-packages/pydantic/_internal/_config.py:345: UserWarning: Valid config keys have changed in V2:
+* 'orm_mode' has been renamed to 'from_attributes'
+  warnings.warn(message, UserWarning)
+INFO:     Started server process [369132]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:5566 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [369132]
