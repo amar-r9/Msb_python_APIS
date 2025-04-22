@@ -9,7 +9,7 @@ from app.models.user import UserResponse
 class CategoryType(Base):
     __tablename__ = 'category_types'
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String)
+    name = Column(String(255))
 
     categories = relationship("Category", back_populates="category_type")
 

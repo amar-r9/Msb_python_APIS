@@ -9,7 +9,7 @@ from app.models.user import UserResponse
 class Grade(Base):
     __tablename__ = 'grades'
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String)
+    name = Column(String(255))
     created_by = Column(Integer, nullable=True, index=True)
 
     students = relationship("Student", back_populates="grade")

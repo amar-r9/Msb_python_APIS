@@ -7,7 +7,7 @@ from pydantic import BaseModel
 class Role(Base):
     __tablename__ = 'roles'
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String)
+    name = Column(String(255))
     created_by = Column(Integer, nullable=True, index=True)
 
     user = relationship("User", back_populates="role")

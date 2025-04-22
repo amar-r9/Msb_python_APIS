@@ -11,8 +11,8 @@ from app.utils.common import CATEGORY_MEDIA_FOLDER
 class Category(Base):
     __tablename__ = 'categories'
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String)
-    icon = Column(String)
+    name = Column(String(255))
+    icon = Column(String(255))
     is_future = Column(Integer)
     type = Column(Integer, ForeignKey('category_types.id'), index=True)
 

@@ -20,7 +20,7 @@ class Student(Base):
     school_id = Column(Integer, ForeignKey('schools.id'), nullable=True)
     country_id = Column(Integer, ForeignKey('countries.id'), nullable=True)
     state_id = Column(Integer, ForeignKey("states.id"), nullable=True)
-    city = Column(String,nullable=True)
+    city = Column(String(255),nullable=True)
     dob = Column(Date,nullable=True)
     score = Column(Integer,nullable=True)
     points = Column(Integer,nullable=True)

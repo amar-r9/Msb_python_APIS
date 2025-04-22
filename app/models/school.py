@@ -8,7 +8,7 @@ from pydantic import BaseModel
 class School(Base):
     __tablename__ = 'schools'
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String)
+    name = Column(String(255))
     points = Column(Integer, nullable=True, index=True)
     created_by = Column(Integer, nullable=True, index=True)
 
