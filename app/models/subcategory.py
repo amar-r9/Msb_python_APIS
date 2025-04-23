@@ -12,8 +12,8 @@ class SubCategory(Base):
     __tablename__ = 'sub_categories'
     id = Column(Integer, primary_key=True, index=True)
     category_id = Column(Integer, ForeignKey('categories.id'), index=True)
-    name = Column(String)
-    icon = Column(String, nullable=True)
+    name = Column(String(255))
+    icon = Column(String(255), nullable=True)
 
     category = relationship("Category", back_populates="subcategories")
     submissions = relationship("Submission", back_populates="subcategory")

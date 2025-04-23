@@ -19,9 +19,9 @@ class Submission(Base):
     grade_id = Column(Integer, ForeignKey('grades.id'), nullable=True)
     school_id = Column(Integer, ForeignKey('schools.id'), nullable=True)
 
-    title  = Column(String, nullable=True)
-    description  = Column(String, nullable=True)
-    media  = Column(String, nullable=True)
+    title  = Column(String(255), nullable=True)
+    description  = Column(String(255), nullable=True)
+    media  = Column(String(255), nullable=True)
     created_at  = Column(DateTime, nullable=True)
 
     user = relationship("User", back_populates="submissions")  # Use string reference here
