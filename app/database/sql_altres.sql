@@ -52,3 +52,55 @@ ALTER TABLE `users` ADD `token_expiry` DATETIME NULL AFTER `is_verified`;
 
 ALTER TABLE `users` ADD `is_verified` INT NOT NULL DEFAULT '0' AFTER `created_at`;
 
+-- 2-05-2025
+-- new
+DROP TABLE quizzes;
+DROP TABLE `quiz_answers`, `quiz_options`;
+
+
+CREATE TABLE `quizzes` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `category_id` int(10) UNSIGNED NOT NULL,
+  `sub_category_id` int(10) UNSIGNED NOT NULL,
+  `grade_id` int(10) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+
+
+CREATE TABLE `questions` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `quiz_id` int(10) UNSIGNED NOT NULL,
+  `category_id` int(10) UNSIGNED NOT NULL,
+  `sub_category_id` int(10) UNSIGNED NOT NULL,
+  `grade_id` int(10) UNSIGNED NOT NULL,
+  `name` text NOT NULL,
+   PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+
+CREATE TABLE `question_options` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `quiz_id` int(10) UNSIGNED NOT NULL,
+  `category_id` int(10) UNSIGNED NOT NULL,
+  `sub_category_id` int(10) UNSIGNED NOT NULL,
+  `grade_id` int(10) UNSIGNED NOT NULL,
+  `question_id` int(10) UNSIGNED NOT NULL,
+  `name` text NOT NULL,
+  `is_correct` tinyint(1) DEFAULT 0,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+CREATE TABLE `student_answers` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `user_id` int(10) UNSIGNED NOT NULL,
+  `quiz_id` int(10) UNSIGNED NOT NULL,
+  `category_id` int(10) UNSIGNED NOT NULL,
+  `sub_category_id` int(10) UNSIGNED NOT NULL,
+  `grade_id` int(10) UNSIGNED NOT NULL,
+  `question_id` int(10) UNSIGNED NOT NULL,
+  `question_option_id` int(10) UNSIGNED NOT NULL,
+  `is_correct` tinyint(1) DEFAULT 0,
+   PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;

@@ -13,7 +13,8 @@ from app.config.settings import settings
 from app.database.connection import get_db
 from app.models import User
 from app.routes import auth_routes, user_routes, swagger_routes, student_routes, categories_routes, masters_routes, \
-    pre_auth_routes, submissions_routes, school_routes
+    pre_auth_routes, submissions_routes, school_routes, quiz_routes, quiz_questions_routes, \
+    quiz_question_options_routes, student_answer_routes
 from fastapi.openapi.utils import get_openapi
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
@@ -89,6 +90,10 @@ app.include_router(student_routes.router, prefix="/student", tags=["Students"])
 app.include_router(categories_routes.router, prefix="/category", tags=["Category"])
 app.include_router(submissions_routes.router, prefix="/submission", tags=["Submissions"])
 app.include_router(school_routes.router, prefix="/school", tags=["School"])
+app.include_router(quiz_routes.router, prefix="/quiz", tags=["Quiz"])
+app.include_router(quiz_questions_routes.router, prefix="/quiz_questions", tags=["QuizQuestions"])
+app.include_router(quiz_question_options_routes.router, prefix="/quiz_question_options", tags=["QuizQuestionsOptions"])
+app.include_router(student_answer_routes.router, prefix="/student_answer", tags=["QuizStudentAnswer"])
 
 app.include_router(swagger_routes.router)
 

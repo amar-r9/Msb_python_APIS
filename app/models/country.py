@@ -9,7 +9,7 @@ from app.models.user import UserResponse
 class Country(Base):
     __tablename__ = 'countries'
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(255))
+    name = Column(String)
     created_by = Column(Integer, nullable=True, index=True)
 
     students = relationship("Student", back_populates="country")

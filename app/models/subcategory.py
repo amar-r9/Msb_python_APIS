@@ -12,12 +12,17 @@ class SubCategory(Base):
     __tablename__ = 'sub_categories'
     id = Column(Integer, primary_key=True, index=True)
     category_id = Column(Integer, ForeignKey('categories.id'), index=True)
-    name = Column(String(255))
-    icon = Column(String(255), nullable=True)
+    name = Column(String)
+    icon = Column(String, nullable=True)
 
     category = relationship("Category", back_populates="subcategories")
     submissions = relationship("Submission", back_populates="subcategory")
 
+
+    quiz = relationship("Quiz", back_populates="subcategory")
+    questions = relationship("Question", back_populates="subcategory")
+    question_options = relationship("QuestionOption", back_populates="subcategory")
+    student_answers = relationship("StudentAnswer", back_populates="subcategory")  # Add this line
 
     @property
     def icon_path(self):

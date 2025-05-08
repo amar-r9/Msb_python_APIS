@@ -84,18 +84,6 @@ def get_all_categories(db: Session):
 
     return items
 
-    # items_lists = [CategoryResponse.from_orm(item) for item in items]
-    # return items_lists
-
-    # for item in items_query:
-    #     if item.icon:
-    #         item.icon_url = f"{CATEGORY_MEDIA_FOLDER}{item.icon}"
-    #
-    #     if item.subcategories:
-    #         for subcategory in item.subcategories:
-    #             if subcategory.icon:
-    #                 subcategory.icon_url = f"{CATEGORY_MEDIA_FOLDER}{subcategory.icon}"
-
 
 def get_future_categories(db: Session):
     items = (db.query(Category)

@@ -9,7 +9,7 @@ from app.models.user import UserResponse
 class State(Base):
     __tablename__ = 'states'
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(255))
+    name = Column(String)
     country_id = Column(Integer, nullable=True, index=True)
     created_by = Column(Integer, nullable=True, index=True)
 

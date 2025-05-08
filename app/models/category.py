@@ -11,8 +11,8 @@ from app.utils.common import CATEGORY_MEDIA_FOLDER
 class Category(Base):
     __tablename__ = 'categories'
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(255))
-    icon = Column(String(255))
+    name = Column(String)
+    icon = Column(String)
     is_future = Column(Integer)
     type = Column(Integer, ForeignKey('category_types.id'), index=True)
 
@@ -23,7 +23,10 @@ class Category(Base):
         back_populates="categories",
         primaryjoin="Category.type == CategoryType.id"
     )
-
+    quiz = relationship("Quiz", back_populates="category")
+    questions = relationship("Question", back_populates="category")
+    question_options = relationship("QuestionOption", back_populates="category")
+    student_answers = relationship("StudentAnswer", back_populates="category")  # Add this line
 
     @property
     def icon_path(self):

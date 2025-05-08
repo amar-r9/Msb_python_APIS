@@ -52,6 +52,7 @@ def get_user_student(db: Session, user_id: int):
 @router.post("/login")
 def login(request: LoginRequest, db: Session = Depends(get_db)):
     user = get_user_by_email(db, request.email)
+
     if not user or not verify_password(request.password, user.password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 

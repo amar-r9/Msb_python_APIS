@@ -30,6 +30,7 @@ class User(Base):
     user_point = relationship("UserPoint", back_populates="user")
     comments = relationship("Comment", back_populates="user")
     likes = relationship("Like", back_populates="user")
+    student_answers = relationship("StudentAnswer", back_populates="user")
 
     @property
     def image_path(self):
