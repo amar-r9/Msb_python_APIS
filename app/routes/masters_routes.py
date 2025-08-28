@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from app.database.connection import get_db
-from app.models import CategoryType, Role
+from app.models import CategoryType, Role, Category
 from app.models.user import User, UserResponse, LoginRequest
 from app.auth import verify_password, create_access_token
 from app.models.token import Token  # Correct import for the Token model
@@ -25,6 +25,7 @@ def masters(db: Session = Depends(get_db)):
         'states':states,
         'grades':grades,
         'categoryType':CategoryType,
+        'Categories':Category,
         'roles':Role,
         'users':User,
         'schools':schools,
