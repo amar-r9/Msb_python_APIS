@@ -117,20 +117,22 @@ async def show_remove_form(request: Request):
 
 
 # Step 2: Handle Form Submission (Delete User)
-@app.post("/remove-request")
-async def remove_user(email: str = Form(...), db: Session = Depends(get_db)):
+@app.post("/remove-request", response_class=HTMLResponse)
+async def remove_user(request: Request, email: str = Form(...), db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == email).first()
+
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        message = f"❌ User with email {email} not found."
+    elif not user.is_active:
+        message = f"⚠️ User {email} is already deactivated."
+    else:
+        user.is_active = False
+        db.commit()
+        db.refresh(user)
+        message = f"✅ User {user.email} has been deactivated successfully."
 
-    if not user.is_active:
-        raise HTTPException(status_code=400, detail="User already deactivated")
-
-    user.is_active = False
-    db.commit()
-    db.refresh(user)
-
-    return {"message": f"✅ User {user.email} has been deactivated (removed request)."}
+    context = {"request": request, "message": message}
+    return templates.TemplateResponse("remove_request.html", context)
 
 
 
