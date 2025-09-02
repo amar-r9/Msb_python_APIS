@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Request
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 from app.database.connection import get_db
 from app.models import CategoryType, Role, Category
@@ -14,20 +15,17 @@ router = APIRouter()
 
 
 
+
 @router.get("/all")
 def masters(db: Session = Depends(get_db)):
     countries = get_all_countries(db)
     states = get_all_states(db)
     grades = get_all_grades(db)
     schools = get_all_schools(db)
-    return {
-        'countries':countries,
-        'states':states,
-        'grades':grades,
-        'categoryType':CategoryType,
-        'Categories':Category,
-        'roles':Role,
-        'users':User,
-        'schools':schools,
-    }
 
+    return {
+        'countries': jsonable_encoder(countries),
+        'states': jsonable_encoder(states),
+        'grades': jsonable_encoder(grades),
+        'schools': jsonable_encoder(schools),
+    }
