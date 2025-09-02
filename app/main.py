@@ -3,7 +3,7 @@ from datetime import datetime
 from http.client import HTTPException
 
 import fastapi
-from fastapi import FastAPI, Request, Depends
+from fastapi import FastAPI, Request, Depends, Form
 from jose import jwt
 from sqlalchemy.orm import Session
 from starlette.responses import HTMLResponse
@@ -107,6 +107,33 @@ async def read_landing_page(request: Request):
         "greeting": "Hello, Welcome to MSB API'S!",
     }
     return templates.TemplateResponse("index.html", context)
+
+
+# Step 1: Show Form Page
+@app.get("/remove-request", response_class=HTMLResponse)
+async def show_remove_form(request: Request):
+    context = {"request": request, "message": ""}
+    return templates.TemplateResponse("remove_request.html", context)
+
+
+# Step 2: Handle Form Submission (Delete User)
+@app.post("/remove-request")
+async def remove_user(email: str = Form(...), db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.email == email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if not user.is_active:
+        raise HTTPException(status_code=400, detail="User already deactivated")
+
+    user.is_active = False
+    db.commit()
+    db.refresh(user)
+
+    return {"message": f"✅ User {user.email} has been deactivated (removed request)."}
+
+
+
 
 @app.get("/force-update")
 def force_update():

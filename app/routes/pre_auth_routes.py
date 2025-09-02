@@ -48,23 +48,27 @@ def get_user_student(db: Session, user_id: int):
     )
     return user_with_relations_as_student
 
-
 @router.post("/login")
 def login(request: LoginRequest, db: Session = Depends(get_db)):
     user = get_user_by_email(db, request.email)
 
+    # If no user found
     if not user or not verify_password(request.password, user.password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
+    # If user inactive
+    if not user.is_active:
+        raise HTTPException(status_code=404, detail="User not exist")
+
+    # If user not verified
     if not user.is_verified:
         raise HTTPException(status_code=403, detail="User is not verified. Please verify your email before logging in.")
 
     # Create access token
     access_token = create_access_token(data={"sub": user.email})
 
-    if user.role_id == 2:  # Access `role_id` as a key in a dictionary
+    if user.role_id == 2:  # Student role
         student = get_user_student(db, user.id)
-
         points = student.points
         likes = student.likes
         score = student.score

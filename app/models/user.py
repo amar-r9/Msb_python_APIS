@@ -21,6 +21,7 @@ class User(Base):
     reset_token = Column(String(200), nullable=False)
     token_expiry = Column(Integer, nullable=False)
     is_verified = Column(Boolean, nullable=False)
+    is_active = Column(Boolean, nullable=False, default=True)
 
     role_id = Column(Integer, ForeignKey("roles.id"), nullable=True)
     role = relationship("Role", back_populates="user")

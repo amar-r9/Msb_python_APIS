@@ -11,18 +11,38 @@ from app.utils.common import hash_password, BASE_URL, USER_PROFILES_MEDIA_FOLDER
 
 
 def create_user_by_data(db: Session, user: UserCreate):
+    # First, check if user already exists
+    existing_user = db.query(User).filter(User.email == user.email).first()
+
+    if existing_user:
+        if existing_user.is_active:
+            # User already active, cannot create again
+            raise HTTPException(status_code=400, detail="User with this email already exists and is active.")
+        else:
+            # Reactivate existing user
+            existing_user.name = user.name
+            existing_user.role_id = user.role_id
+            existing_user.password = hash_password(user.password)
+            existing_user.is_active = True
+            db.commit()
+            db.refresh(existing_user)
+
+            existing_user.image_url = existing_user.image_path
+            return existing_user
+
+    # If user does not exist, create a new one
     new_user = User(
         name=user.name,
         email=user.email,
         role_id=user.role_id,
         password=hash_password(user.password),
+        is_active=True
     )
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
 
     new_user.image_url = new_user.image_path
-
     return new_user
 
 
