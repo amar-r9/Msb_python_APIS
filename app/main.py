@@ -110,14 +110,14 @@ async def read_landing_page(request: Request):
 
 
 # Step 1: Show Form Page
-@app.get("/remove-request", response_class=HTMLResponse)
+@app.get("/delete-account", response_class=HTMLResponse)
 async def show_remove_form(request: Request):
     context = {"request": request, "message": ""}
-    return templates.TemplateResponse("remove_request.html", context)
+    return templates.TemplateResponse("delete_request.html", context)
 
 
 # Step 2: Handle Form Submission (Delete User)
-@app.post("/remove-request", response_class=HTMLResponse)
+@app.post("/delete-account", response_class=HTMLResponse)
 async def remove_user(request: Request, email: str = Form(...), db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == email).first()
 
@@ -129,10 +129,10 @@ async def remove_user(request: Request, email: str = Form(...), db: Session = De
         user.is_active = False
         db.commit()
         db.refresh(user)
-        message = f"✅ User {user.email} has been deactivated successfully."
+        message = f"✅ User {user.email} has been Deleted successfully."
 
     context = {"request": request, "message": message}
-    return templates.TemplateResponse("remove_request.html", context)
+    return templates.TemplateResponse("delete_request.html", context)
 
 
 
