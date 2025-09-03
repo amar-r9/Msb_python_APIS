@@ -3,9 +3,10 @@ from sqlalchemy.orm import Session
 
 from app.database.connection import get_db
 from app.models.category import CategoryResponse, CategoryCreate
+from app.models.subcategory import SubCategoryCreate
 from app.services.auth import get_current_user
 from app.services.category import create_category_by_data, get_category_by_id, \
-    get_all_category_paginated, get_all_sub_category_paginated, get_all_categories
+    get_all_category_paginated, get_all_sub_category_paginated, get_all_categories, create_sub_category_by_data
 from app.models.user import User
 
 
@@ -39,6 +40,10 @@ def get_categories(
     }
 
 
+@router.post("/create-sub-categories")
+def create_category(user: SubCategoryCreate, db: Session = Depends(get_db),current_user: User = Depends(get_current_user)):
+    item = create_sub_category_by_data(db, user)
+    return item
 
 @router.get("/get-sub-categories")
 def get_quiz_sub_categories(

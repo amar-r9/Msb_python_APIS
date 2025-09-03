@@ -146,3 +146,22 @@ def resend_verification(email: str, background_tasks: BackgroundTasks, db: Sessi
     background_tasks.add_task(send_verification_email, user.email, token)
 
     return {"message": "Verification email has been resent"}
+
+
+
+@router.post("/delete-account")
+async def delete_user(email: str, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.email == email).first()
+
+    if not user:
+        message = f"❌ User with email {email} not found."
+    elif not user.is_active:
+        message = f"⚠️ User {email} is already deactivated."
+    else:
+        user.is_active = False
+        db.commit()
+        db.refresh(user)
+        message = f"✅ User {user.email} has been Deleted successfully."
+
+    context = { "message": message}
+    return context

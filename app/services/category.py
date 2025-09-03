@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session, joinedload
 
 from app.database.connection import get_db
 from app.models.category import CategoryCreate, Category, CategoryResponse
-from app.models.subcategory import SubCategory
+from app.models.subcategory import SubCategory, SubCategoryCreate
 from app.models.student import Student, StudentCreate
 from app.models.user import User
 from app.utils.common import hash_password, BASE_URL, CATEGORY_MEDIA_FOLDER
@@ -27,6 +27,36 @@ def create_category_by_data(db: Session, item: CategoryCreate):
     db.refresh(model_item)
 
     return model_item
+
+
+
+def create_sub_category_by_data(db: Session, item: SubCategoryCreate):
+    # Check if subcategory with same name exists in the same category
+    check_existing = (
+        db.query(SubCategory)
+        .filter(
+            SubCategory.name == item.name,
+            SubCategory.category_id == item.category_id
+        )
+        .first()
+    )
+    if check_existing:
+        raise HTTPException(
+            status_code=400,
+            detail="SubCategory with this name already exists in the same Category."
+        )
+
+    model_item = SubCategory(
+        name=item.name,
+        category_id=item.category_id,
+        icon=item.icon  # Don't forget to set icon if passed
+    )
+    db.add(model_item)
+    db.commit()
+    db.refresh(model_item)
+
+    return model_item
+
 
 
 # def get_student_by_email(db: Session, email: str):
