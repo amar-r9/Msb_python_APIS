@@ -28,6 +28,7 @@ os.makedirs("static/media/videos", exist_ok=True)
 os.makedirs("static/media/audios", exist_ok=True)
 os.makedirs("static/media/user_profile_images", exist_ok=True)
 os.makedirs("static/media/category_images", exist_ok=True)
+os.makedirs("static/media/sub_category_images", exist_ok=True)
 app = FastAPI()
 
 app.mount("/static/media/images", StaticFiles(directory="static/media/images"), name="images")
@@ -35,6 +36,7 @@ app.mount("/static/media/videos", StaticFiles(directory="static/media/videos"), 
 app.mount("/static/media/audios", StaticFiles(directory="static/media/audios"), name="audios")
 app.mount("/static/media/user_profile_images", StaticFiles(directory="static/media/user_profile_images"), name="user_profile_images")
 app.mount("/static/media/category_images", StaticFiles(directory="static/media/category_images"), name="category_images")
+app.mount("/static/media/sub_category_images", StaticFiles(directory="static/media/sub_category_images"), name="category_images")
 app.mount("/static/media/submissions", StaticFiles(directory="static/media/submissions"), name="submissions")
 
 

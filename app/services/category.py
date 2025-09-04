@@ -11,16 +11,14 @@ from app.utils.common import hash_password, BASE_URL, CATEGORY_MEDIA_FOLDER
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 
 
-def create_category_by_data(db: Session, item: CategoryCreate):
-    student_role_id = 2  # Replace with the ID of the student role in your database
-    default_password = hash_password("password")  # Replace with your default password
-
-    check_existing = db.query(Category).filter(Category.name == item.name).first()
+def create_category_by_data(db: Session, name: str):
+    # Check duplicate
+    check_existing = db.query(Category).filter(Category.name == name).first()
     if check_existing:
-        raise HTTPException(status_code=400, detail="A user with this name already exists.")
+        raise HTTPException(status_code=400, detail="Category with this name already exists.")
 
     model_item = Category(
-        name=item.name,
+        name=name,
     )
     db.add(model_item)
     db.commit()

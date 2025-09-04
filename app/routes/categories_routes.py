@@ -1,14 +1,17 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, Request
+import os
+from typing import Optional
+
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Form, File, UploadFile
 from sqlalchemy.orm import Session
 
 from app.database.connection import get_db
-from app.models.category import CategoryResponse, CategoryCreate
-from app.models.subcategory import SubCategoryCreate
+from app.models.category import CategoryResponse, CategoryCreate, Category
+from app.models.subcategory import SubCategoryCreate, SubCategory
 from app.services.auth import get_current_user
 from app.services.category import create_category_by_data, get_category_by_id, \
     get_all_category_paginated, get_all_sub_category_paginated, get_all_categories, create_sub_category_by_data
 from app.models.user import User
-
+from app.utils.common import save_uploaded_file
 
 router = APIRouter()
 
@@ -19,11 +22,46 @@ router = APIRouter()
 #         raise HTTPException(status_code=404, detail="Category not found")
 #     return item
 
+UPLOAD_DIR = "static/media/category_images/"
+
+UPLOAD_SUB_CATEGORY_DIR = "static/media/sub_category_images/"
+
 
 @router.post("/create-category")
-def create_category(user: CategoryCreate, db: Session = Depends(get_db),current_user: User = Depends(get_current_user)):
-    item = create_category_by_data(db, user)
-    return item
+async def create_category(
+    name: str = Form(...),
+    is_future: int = Form(...),
+    type: int = Form(...),
+    icon: UploadFile = File(None),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    check_existing = db.query(Category).filter(Category.name == name).first()
+    if check_existing:
+        raise HTTPException(status_code=400, detail="Category with this name already exists.")
+
+    filename = None
+    if icon:
+        filename = save_uploaded_file(UPLOAD_DIR, icon, prefix=name)
+
+    model_item = Category(
+        name=name,
+        icon=filename,
+        is_future=is_future,
+        type=type
+    )
+    db.add(model_item)
+    db.commit()
+    db.refresh(model_item)
+
+    return {
+        "id": model_item.id,
+        "name": model_item.name,
+        "icon": model_item.icon_path
+    }
+
+
+
 
 
 
@@ -40,10 +78,54 @@ def get_categories(
     }
 
 
+
 @router.post("/create-sub-categories")
-def create_category(user: SubCategoryCreate, db: Session = Depends(get_db),current_user: User = Depends(get_current_user)):
-    item = create_sub_category_by_data(db, user)
-    return item
+async def create_sub_category(
+    name: str = Form(..., description="Name of the subcategory"),
+    category_id: int = Form(..., description="ID of the parent category"),
+    description: Optional[str] = Form(None, description="Optional description"),
+    icon: Optional[UploadFile] = File(None, description="Optional icon file"),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    # check if already exists
+    check_existing = (
+        db.query(SubCategory)
+        .filter(SubCategory.name == name, SubCategory.category_id == category_id)
+        .first()
+    )
+    if check_existing:
+        raise HTTPException(
+            status_code=400,
+            detail="SubCategory already exists in this Category."
+        )
+
+    # save icon if uploaded
+    filename = None
+    if icon:
+        filename = save_uploaded_file(UPLOAD_SUB_CATEGORY_DIR, icon, prefix=name)
+
+    # create subcategory
+    model_item = SubCategory(
+        name=name,
+        category_id=category_id,
+        description=description,
+        icon=filename
+    )
+    db.add(model_item)
+    db.commit()
+    db.refresh(model_item)
+
+    return {
+        "id": model_item.id,
+        "name": model_item.name,
+        "icon": model_item.icon_path,
+        "category_id": model_item.category_id,
+        "description": model_item.description
+    }
+
+
+
 
 @router.get("/get-sub-categories")
 def get_quiz_sub_categories(

@@ -1,10 +1,13 @@
+import os
 import secrets
 import string
+import time
 from datetime import datetime, timedelta
 from email.message import EmailMessage
 from random import random
 
 import aiosmtplib
+from fastapi import UploadFile
 from fastapi_mail import MessageSchema, FastMail, ConnectionConfig
 from jinja2 import Environment, FileSystemLoader
 from jose import jwt
@@ -25,6 +28,7 @@ BASE_URL = f"{settings.APP_URL}/static"
 SUBMISSIONS_MEDIA_FOLDER = f"{BASE_URL}/media/submissions/"
 USER_PROFILES_MEDIA_FOLDER = f"{BASE_URL}/media/user_profile_images/"
 CATEGORY_MEDIA_FOLDER = f"{BASE_URL}/media/category_images/"
+SUB_CATEGORY_MEDIA_FOLDER = f"{BASE_URL}/media/sub_category_images/"
 
 
 
@@ -129,3 +133,22 @@ def generate_verification_token(email: str):
     return jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
 
+
+
+
+def save_uploaded_file(upload_dir: str, upload_file: UploadFile, prefix: str) -> str:
+    os.makedirs(upload_dir, exist_ok=True)
+
+    # extract extension only (.png, .jpg etc)
+    _, ext = os.path.splitext(upload_file.filename)
+
+    # generate new file name
+    timestamp = int(time.time())
+    new_filename = f"{prefix}_{timestamp}{ext}"
+
+    file_path = os.path.join(upload_dir, new_filename)
+
+    with open(file_path, "wb") as buffer:
+        buffer.write(upload_file.file.read())
+
+    return new_filename

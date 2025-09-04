@@ -51,43 +51,74 @@ def create_student_by_data(db: Session, student: StudentCreate):
 
 def register_student_by_data(db: Session, student: RegisterStudentRequest, background_tasks: BackgroundTasks):
     student_role_id = 2
-    encrypted_password = hash_password(student.password)  # Encrypt the password
+    encrypted_password = hash_password(student.password)
 
-    # Check if the email already exists
     existing_user = db.query(User).filter(User.email == student.email).first()
     if existing_user:
-        raise HTTPException(status_code=400, detail="A user with this email already exists.")
+        if not existing_user.is_active:
+            # Reactivate user
+            existing_user.is_active = True
+            existing_user.password = encrypted_password  # reset password
+            existing_user.name = student.name            # update latest name
+            db.add(existing_user)
+            db.flush()
 
+            # check student already linked
+            existing_student = db.query(Student).filter(Student.user_id == existing_user.id).first()
+            if not existing_student:
+                # Create new Student record
+                new_student = Student(
+                    user_id=existing_user.id,
+                    grade_id=student.grade_id,
+                    school_id=student.school_id,
+                    country_id=student.country_id,
+                    state_id=student.state_id,
+                    dob=student.dob,
+                    score=0, points=0, likes=0, rank=0,
+                    city=student.city,
+                    created_at=datetime.now(),
+                    updated_at=datetime.now(),
+                )
+                db.add(new_student)
+                db.flush()
+            else:
+                new_student = existing_student
+
+            db.commit()
+            return new_student
+
+        # Already active → raise error
+        raise HTTPException(status_code=400, detail="User with this email already exists and is active.")
+
+    # 🆕 Create fresh user if not exists
     try:
-        # Create a new user
         new_user = User(
             name=student.name,
             email=student.email,
             role_id=student_role_id,
             password=encrypted_password,
+            is_active=True,
+            is_verified=False,
+            image="",  # default
+            reset_token="",
+            token_expiry=0
         )
         db.add(new_user)
         db.flush()
 
-        # Create or fetch the school
+        # handle school
         if not student.school_id:
             if not student.school_name:
                 raise HTTPException(status_code=400, detail="School name is required to create a new school.")
 
-            # Create a new school if school_id is not provided
-            new_school = School(
-                name=student.school_name,
-                created_by=new_user.id,
-            )
+            new_school = School(name=student.school_name, created_by=new_user.id)
             db.add(new_school)
             db.flush()
         else:
-            # Fetch the existing school by ID
             new_school = db.query(School).filter(School.id == student.school_id).first()
             if not new_school:
                 raise HTTPException(status_code=404, detail="School with the provided ID does not exist.")
 
-        # Create the student record
         new_student = Student(
             user_id=new_user.id,
             grade_id=student.grade_id,
@@ -95,38 +126,25 @@ def register_student_by_data(db: Session, student: RegisterStudentRequest, backg
             country_id=student.country_id,
             state_id=student.state_id,
             dob=student.dob,
-            score=0,
-            points=0,
-            likes=0,
-            rank=0,
+            score=0, points=0, likes=0, rank=0,
             city=student.city,
             created_at=datetime.now(),
             updated_at=datetime.now(),
         )
         db.add(new_student)
-        db.flush()
-
-
-
-        student_with_relations = (
-            db.query(Student)
-            .options(
-                joinedload(Student.user).defer(User.password),
-                joinedload(Student.school),
-                joinedload(Student.grade),
-            )
-            .filter(Student.id == new_student.id)
-            .first()
-        )
         db.commit()
 
         token = generate_verification_token(new_user.email)
         background_tasks.add_task(send_verification_email, new_user.email, token)
-        return student_with_relations
+
+        return new_student
     except Exception as e:
-        # Rollback the transaction in case of any failure
         db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
+
+
+
+
 
 
 # def get_student_by_email(db: Session, email: str):

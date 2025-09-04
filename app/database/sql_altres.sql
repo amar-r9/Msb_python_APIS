@@ -110,3 +110,6 @@ CREATE TABLE `student_answers` (
 -- 02-09-2025
 
 ALTER TABLE `users` ADD `is_active` INT NOT NULL DEFAULT '1' AFTER `is_verified`;
+
+-- 02-09-2025
+ALTER TABLE `sub_categories` ADD `description` TEXT NULL DEFAULT NULL AFTER `category_id`;

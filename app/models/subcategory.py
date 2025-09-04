@@ -5,7 +5,7 @@ from app.database.connection import Base
 from pydantic import BaseModel
 
 from app.models.user import UserResponse
-from app.utils.common import CATEGORY_MEDIA_FOLDER
+from app.utils.common import SUB_CATEGORY_MEDIA_FOLDER
 
 
 class SubCategory(Base):
@@ -14,6 +14,7 @@ class SubCategory(Base):
     category_id = Column(Integer, ForeignKey('categories.id'), index=True)
     name = Column(String)
     icon = Column(String, nullable=True)
+    description = Column(String, nullable=True)
 
     category = relationship("Category", back_populates="subcategories")
     submissions = relationship("Submission", back_populates="subcategory")
@@ -27,7 +28,7 @@ class SubCategory(Base):
     @property
     def icon_path(self):
         if self.icon:
-            return f"{CATEGORY_MEDIA_FOLDER}{self.icon}"
+            return f"{SUB_CATEGORY_MEDIA_FOLDER}{self.icon}"
         return None
 
 # Pydantic Model for creating/updating students
