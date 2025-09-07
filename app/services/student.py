@@ -101,7 +101,6 @@ def register_student_by_data(db: Session, student: RegisterStudentRequest, backg
             is_verified=False,
             image="",  # default
             reset_token="",
-            token_expiry="",
         )
         db.add(new_user)
         db.flush()
