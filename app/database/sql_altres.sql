@@ -46,11 +46,11 @@ ALTER TABLE `comments` CHANGE `parent_id` `parent_id` INT(11) NULL;
 ALTER TABLE `schools` ADD `rank` INT NOT NULL DEFAULT '0' AFTER `name`;
 
 -- update
-
+ALTER TABLE `users` ADD `image` VARCHAR(255) NULL AFTER `email`;
 ALTER TABLE `users` ADD `reset_token` VARCHAR(255) NULL AFTER `image`;
-ALTER TABLE `users` ADD `token_expiry` DATETIME NULL AFTER `is_verified`;
 
 ALTER TABLE `users` ADD `is_verified` INT NOT NULL DEFAULT '0' AFTER `created_at`;
+ALTER TABLE `users` ADD `token_expiry` DATETIME NULL AFTER `is_verified`;
 
 -- 2-05-2025
 -- new

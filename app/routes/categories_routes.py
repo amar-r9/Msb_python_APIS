@@ -79,6 +79,7 @@ def get_categories(
 
 
 
+
 @router.post("/create-sub-categories")
 async def create_sub_category(
     name: str = Form(..., description="Name of the subcategory"),
@@ -88,7 +89,7 @@ async def create_sub_category(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    # check if already exists
+    # Check if already exists
     check_existing = (
         db.query(SubCategory)
         .filter(SubCategory.name == name, SubCategory.category_id == category_id)
@@ -100,12 +101,12 @@ async def create_sub_category(
             detail="SubCategory already exists in this Category."
         )
 
-    # save icon if uploaded
+    # Save icon if uploaded
     filename = None
-    if icon:
+    if icon is not None:
         filename = save_uploaded_file(UPLOAD_SUB_CATEGORY_DIR, icon, prefix=name)
 
-    # create subcategory
+    # Create subcategory
     model_item = SubCategory(
         name=name,
         category_id=category_id,
@@ -119,7 +120,7 @@ async def create_sub_category(
     return {
         "id": model_item.id,
         "name": model_item.name,
-        "icon": model_item.icon_path,
+        "icon": model_item.icon_path,  # returns full path or None
         "category_id": model_item.category_id,
         "description": model_item.description
     }
