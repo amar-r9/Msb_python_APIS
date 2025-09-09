@@ -146,3 +146,109 @@ def get_quiz_sub_categories(
         # "current_user": current_user,
         "data": data
     }
+
+
+
+
+
+@router.put("/update-category/{category_id}")
+async def update_category(
+    category_id: int,
+    name: Optional[str] = Form(None),
+    is_future: Optional[int] = Form(None),
+    type: Optional[int] = Form(None),
+    icon: Optional[UploadFile] = File(None),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    # Fetch the existing category
+    category = db.query(Category).filter(Category.id == category_id).first()
+    if not category:
+        raise HTTPException(status_code=404, detail="Category not found")
+
+    # Prevent duplicate names if updating the name
+    if name and name != category.name:
+        existing = db.query(Category).filter(Category.name == name).first()
+        if existing:
+            raise HTTPException(status_code=400, detail="Category with this name already exists.")
+        category.name = name
+
+    # Update fields if provided
+    if is_future is not None:
+        category.is_future = is_future
+    if type is not None:
+        category.type = type
+
+    # Handle icon update
+    if icon:
+        filename = save_uploaded_file(UPLOAD_DIR, icon, prefix=category.name)
+        category.icon = filename
+
+    db.commit()
+    db.refresh(category)
+
+    return {
+        "id": category.id,
+        "name": category.name,
+        "icon": category.icon_path
+    }
+
+
+
+
+@router.put("/update-sub-category/{sub_category_id}")
+async def update_sub_category(
+    sub_category_id: int,
+    name: Optional[str] = Form(None, description="Updated name of the subcategory"),
+    category_id: Optional[int] = Form(None, description="Updated parent category ID"),
+    description: Optional[str] = Form(None, description="Updated description"),
+    icon: Optional[UploadFile] = File(None, description="Updated icon file"),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    # Fetch existing subcategory
+    sub_category = db.query(SubCategory).filter(SubCategory.id == sub_category_id).first()
+    if not sub_category:
+        raise HTTPException(status_code=404, detail="SubCategory not found")
+
+    # Check for duplicate name within the same category (only if name/category_id is updated)
+    if name or category_id:
+        target_category_id = category_id if category_id is not None else sub_category.category_id
+        existing = (
+            db.query(SubCategory)
+            .filter(
+                SubCategory.name == (name or sub_category.name),
+                SubCategory.category_id == target_category_id,
+                SubCategory.id != sub_category.id
+            )
+            .first()
+        )
+        if existing:
+            raise HTTPException(
+                status_code=400,
+                detail="Another SubCategory with this name already exists in the target Category."
+            )
+
+    # Update fields if provided
+    if name is not None:
+        sub_category.name = name
+    if category_id is not None:
+        sub_category.category_id = category_id
+    if description is not None:
+        sub_category.description = description
+
+    # Handle icon update
+    if icon:
+        filename = save_uploaded_file(UPLOAD_SUB_CATEGORY_DIR, icon, prefix=sub_category.name)
+        sub_category.icon = filename
+
+    db.commit()
+    db.refresh(sub_category)
+
+    return {
+        "id": sub_category.id,
+        "name": sub_category.name,
+        "icon": sub_category.icon_path,
+        "category_id": sub_category.category_id,
+        "description": sub_category.description
+    }
