@@ -253,3 +253,21 @@ async def update_sub_category(
         "category_id": sub_category.category_id,
         "description": sub_category.description
     }
+
+
+@router.delete("/delete-category/{category_id}")
+def delete_category(
+    category_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    category = db.query(Category).filter(Category.id == category_id).first()
+    if not category:
+        raise HTTPException(status_code=404, detail="Category not found")
+
+    # Optionally, handle cascading deletes or checks for related records here
+
+    db.delete(category)
+    db.commit()
+
+    return {"detail": "Category deleted successfully"}
