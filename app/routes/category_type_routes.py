@@ -1,4 +1,3 @@
-
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
@@ -10,7 +9,7 @@ from app.database.connection import get_db
 
 router = APIRouter(
     prefix="/category-types",
-    tags=["Category Types"]
+    # tags=["Category Types"]
 )
 
 @router.get("/", response_model=List[CategoryTypeResponse])

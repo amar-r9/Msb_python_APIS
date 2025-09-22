@@ -89,8 +89,8 @@ app.include_router(pre_auth_routes.router, prefix="/pre", tags=["PreAuth"])
 app.include_router(auth_routes.router, prefix="/auth", tags=["Auth"])
 app.include_router(user_routes.router, prefix="/users", tags=["Users"])
 app.include_router(student_routes.router, prefix="/student", tags=["Students"])
-app.include_router(categories_routes.router, prefix="/category", tags=["Category"])
-app.include_router(category_type_routes.router, prefix="/categorytype", tags=["Category_type"])
+app.include_router(categories_routes.router, prefix="/category", tags=["Categories"]) 
+app.include_router(category_type_routes.router, prefix="/categorytype", tags=["Category Types"]) 
 app.include_router(submissions_routes.router, prefix="/submission", tags=["Submissions"])
 app.include_router(school_routes.router, prefix="/school", tags=["School"])
 app.include_router(quiz_routes.router, prefix="/quiz", tags=["Quiz"])
@@ -125,9 +125,9 @@ async def remove_user(request: Request, email: str = Form(...), db: Session = De
     user = db.query(User).filter(User.email == email).first()
 
     if not user:
-        message = f"❌ User with email {email} not found."
+        message = f"User with email {email} not found."
     elif not user.is_active:
-        message = f"⚠️ User {email} is already deactivated."
+        message = f"⚠️ser {email} is already deactivated."
     else:
         user.is_active = False
         db.commit()
