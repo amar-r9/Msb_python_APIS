@@ -151,7 +151,7 @@ def get_quiz_sub_categories(
 
 
 
-@router.put("/update-category/{category_id}")
+@router.post("/update-category/{category_id}", response_model=CategoryResponse)
 async def update_category(
     category_id: int,
     name: Optional[str] = Form(None),
@@ -187,11 +187,12 @@ async def update_category(
     db.commit()
     db.refresh(category)
 
-    return {
-        "id": category.id,
-        "name": category.name,
-        "icon": category.icon_path
-    }
+    # return {
+    #     "id": category.id,
+    #     "name": category.name,
+    #     "icon": category.icon_path
+    # }
+    return category
 
 
 
