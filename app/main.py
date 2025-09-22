@@ -12,7 +12,7 @@ from starlette.templating import Jinja2Templates
 from app.config.settings import settings
 from app.database.connection import get_db
 from app.models import User
-from app.routes import auth_routes, user_routes, swagger_routes, student_routes, categories_routes, masters_routes, \
+from app.routes import auth_routes, category_type_routes, user_routes, swagger_routes, student_routes, categories_routes, masters_routes, \
     pre_auth_routes, submissions_routes, school_routes, quiz_routes, quiz_questions_routes, \
     quiz_question_options_routes, student_answer_routes
 from fastapi.openapi.utils import get_openapi
@@ -89,7 +89,8 @@ app.include_router(pre_auth_routes.router, prefix="/pre", tags=["PreAuth"])
 app.include_router(auth_routes.router, prefix="/auth", tags=["Auth"])
 app.include_router(user_routes.router, prefix="/users", tags=["Users"])
 app.include_router(student_routes.router, prefix="/student", tags=["Students"])
-app.include_router(categories_routes.router, prefix="/category", tags=["Category"])
+app.include_router(categories_routes.router, prefix="/category", tags=["Categories"]) 
+app.include_router(category_type_routes.router, prefix="/categorytype", tags=["Category Types"]) 
 app.include_router(submissions_routes.router, prefix="/submission", tags=["Submissions"])
 app.include_router(school_routes.router, prefix="/school", tags=["School"])
 app.include_router(quiz_routes.router, prefix="/quiz", tags=["Quiz"])
@@ -124,9 +125,9 @@ async def remove_user(request: Request, email: str = Form(...), db: Session = De
     user = db.query(User).filter(User.email == email).first()
 
     if not user:
-        message = f"❌ User with email {email} not found."
+        message = f"User with email {email} not found."
     elif not user.is_active:
-        message = f"⚠️ User {email} is already deactivated."
+        message = f"⚠️ser {email} is already deactivated."
     else:
         user.is_active = False
         db.commit()
