@@ -1,3 +1,4 @@
+from typing import Optional
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 
@@ -48,7 +49,7 @@ class CategoryCreate(BaseModel):
 class CategoryResponse(BaseModel):
     id: int
     name: str
-    icon: str
+    icon: Optional[str] = None
     is_future: int
     # type: int
     category_type: CategoryTypeResponse

@@ -1,6 +1,6 @@
 import os
 from typing import Optional
-
+from sqlalchemy.orm import joinedload
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Form, File, UploadFile
 from sqlalchemy.orm import Session
 
@@ -186,13 +186,13 @@ async def update_category(
 
     db.commit()
     db.refresh(category)
+# After committing, re-fetch the object from the database.
+    # This ensures all its relationships are loaded correctly for the response.
+    updated_category = db.query(Category).options(
+        joinedload(Category.category_type)
+    ).filter(Category.id == category_id).first()
 
-    # return {
-    #     "id": category.id,
-    #     "name": category.name,
-    #     "icon": category.icon_path
-    # }
-    return category
+    return updated_category
 
 
 
@@ -271,3 +271,20 @@ def delete_category(
     db.commit()
 
     return {"detail": "Category deleted successfully"}
+
+@router.delete("/delete-sub-category/{sub_category_id}")
+def delete_sub_category(
+    sub_category_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    sub_category = db.query(SubCategory).filter(SubCategory.id == sub_category_id).first()
+    if not sub_category:
+        raise HTTPException(status_code=404, detail="SubCategory not found")
+
+    # Optionally, handle cascading deletes or checks for related records here
+
+    db.delete(sub_category)
+    db.commit()
+
+    return {"detail": "SubCategory deleted successfully"}
