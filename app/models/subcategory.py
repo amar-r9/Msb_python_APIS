@@ -1,3 +1,5 @@
+import datetime
+from typing import Optional
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 
@@ -15,6 +17,9 @@ class SubCategory(Base):
     name = Column(String)
     icon = Column(String, nullable=True)
     description = Column(String, nullable=True)
+    #added these fields as frontend expecting them
+    start_date = Column(DateTime, nullable=True)
+    end_date = Column(DateTime, nullable=True)
 
     category = relationship("Category", back_populates="subcategories")
     submissions = relationship("Submission", back_populates="subcategory")
@@ -36,14 +41,18 @@ class SubCategoryCreate(BaseModel):
     name: str
     category_id: int
     icon: str
+    start_date: Optional[datetime.datetime] = None
+    end_date: Optional[datetime.datetime] = None
 
 
 # Pydantic Model for response with ORM mode enabled
 class SubCategoryResponse(BaseModel):
     id: int
     name: str
-    icon: str
+    icon: Optional[str] = None
     category_id: int
+    start_date: Optional[datetime.datetime] = None
+    end_date: Optional[datetime.datetime] = None
 
     class Config:
         orm_mode = True

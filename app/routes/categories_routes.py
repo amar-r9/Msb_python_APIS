@@ -1,5 +1,5 @@
 import os
-from typing import Optional
+from typing import List, Optional
 from sqlalchemy.orm import joinedload
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Form, File, UploadFile
 from sqlalchemy.orm import Session
@@ -66,16 +66,14 @@ async def create_category(
 
 
 
-@router.get("/get-categories")
+@router.get("/get-categories",response_model=List[CategoryResponse])
 def get_categories(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     data = get_all_categories(db)
 
-    return {
-        "data": data
-    }
+    return data
 
 
 
@@ -85,7 +83,12 @@ async def create_sub_category(
     name: str = Form(..., description="Name of the subcategory"),
     category_id: int = Form(..., description="ID of the parent category"),
     description: Optional[str] = Form(None, description="Optional description"),
-    icon: Optional[UploadFile] = File(None, description="Optional icon file"),
+    #new fields added as frontend expecting them
+    # grade: Optional[str] = Form(None, description="Grade for the subcategory"),
+    start_date: Optional[str] = Form(None, description="Start date for the subcategory",alias="startDate"),
+    end_date: Optional[str] = Form(None, description="End date for the subcategory",alias="endDate"),
+
+    # icon: Optional[UploadFile] = File(None, description="Optional icon file"),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
@@ -103,15 +106,19 @@ async def create_sub_category(
 
     # Save icon if uploaded
     filename = None
-    if icon is not None:
-        filename = save_uploaded_file(UPLOAD_SUB_CATEGORY_DIR, icon, prefix=name)
+    # if icon is not None:
+    #     filename = save_uploaded_file(UPLOAD_SUB_CATEGORY_DIR, icon, prefix=name)
 
     # Create subcategory
     model_item = SubCategory(
         name=name,
         category_id=category_id,
         description=description,
-        icon=filename
+        # icon=filename
+        #new fields added as frontend expecting them
+        # grade=grade,
+        start_date=start_date,
+        end_date=end_date
     )
     db.add(model_item)
     db.commit()
@@ -120,9 +127,12 @@ async def create_sub_category(
     return {
         "id": model_item.id,
         "name": model_item.name,
-        "icon": model_item.icon_path,  # returns full path or None
+        # "icon": model_item.icon_path,  
         "category_id": model_item.category_id,
-        "description": model_item.description
+        "description": model_item.description,
+        # "grade": model_item.grade,
+        "start_date": model_item.start_date,
+        "end_date": model_item.end_date
     }
 
 
@@ -204,6 +214,8 @@ async def update_sub_category(
     category_id: Optional[int] = Form(None, description="Updated parent category ID"),
     description: Optional[str] = Form(None, description="Updated description"),
     icon: Optional[UploadFile] = File(None, description="Updated icon file"),
+    start_date: Optional[str] = Form(None, description="Updated start date",alias="startDate"),
+    end_date: Optional[str] = Form(None, description="Updated end date",alias="endDate"),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
@@ -242,7 +254,10 @@ async def update_sub_category(
     if icon:
         filename = save_uploaded_file(UPLOAD_SUB_CATEGORY_DIR, icon, prefix=sub_category.name)
         sub_category.icon = filename
-
+    if start_date is not None:
+        sub_category.start_date = start_date
+    if end_date is not None:
+        sub_category.end_date = end_date
     db.commit()
     db.refresh(sub_category)
 
@@ -251,7 +266,9 @@ async def update_sub_category(
         "name": sub_category.name,
         "icon": sub_category.icon_path,
         "category_id": sub_category.category_id,
-        "description": sub_category.description
+        "description": sub_category.description,
+        "start_date": sub_category.start_date,
+        "end_date": sub_category.end_date
     }
 
 

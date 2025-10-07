@@ -1,6 +1,6 @@
 from typing import Type
 
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session, joinedload, selectinload
 
 from app.database.connection import get_db
 from app.models.category import CategoryCreate, Category, CategoryResponse
@@ -95,20 +95,20 @@ def get_all_categories(db: Session):
     items = (
         db.query(Category)
         .options(
-            joinedload(Category.subcategories),
+            selectinload(Category.subcategories),
             joinedload(Category.category_type)
         )
         .all()
     )
 
     # Now you can directly access the icon_url property
-    for item in items:
-        item.icon_url = item.icon_path
+    # for item in items:
+    #     item.icon_url = item.icon_path
 
-        if item.subcategories:
-            for subcategory in item.subcategories:
-                if subcategory.icon:
-                    subcategory.icon_url = subcategory.icon_path
+    #     if item.subcategories:
+    #         for subcategory in item.subcategories:
+    #             if subcategory.icon:
+    #                 subcategory.icon_url = subcategory.icon_path
 
     return items
 
