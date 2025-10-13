@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.database.connection import get_db
 from app.models.category import CategoryResponse, CategoryCreate, Category
-from app.models.subcategory import SubCategoryCreate, SubCategory
+from app.models.subcategory import SubCategoryCreate, SubCategory, SubCategoryResponse
 from app.services.auth import get_current_user
 from app.services.category import create_category_by_data, get_category_by_id, \
     get_all_category_paginated, get_all_sub_category_paginated, get_all_categories, create_sub_category_by_data
@@ -78,15 +78,16 @@ def get_categories(
 
 
 
-@router.post("/create-sub-categories")
+@router.post("/create-sub-categories",response_model=SubCategoryResponse)
 async def create_sub_category(
     name: str = Form(..., description="Name of the subcategory"),
     category_id: int = Form(..., description="ID of the parent category"),
     description: Optional[str] = Form(None, description="Optional description"),
     #new fields added as frontend expecting them
     # grade: Optional[str] = Form(None, description="Grade for the subcategory"),
-    start_date: Optional[str] = Form(None, description="Start date for the subcategory",alias="startDate"),
-    end_date: Optional[str] = Form(None, description="End date for the subcategory",alias="endDate"),
+    start_date: Optional[str] = Form(None, description="Start date for the subcategory"),
+    end_date: Optional[str] = Form(None, description="End date for the subcategory"),
+    grade_id: Optional[int] = Form(None, description="The ID of the selected grade group"),
 
     # icon: Optional[UploadFile] = File(None, description="Optional icon file"),
     db: Session = Depends(get_db),
@@ -118,22 +119,14 @@ async def create_sub_category(
         #new fields added as frontend expecting them
         # grade=grade,
         start_date=start_date,
-        end_date=end_date
+        end_date=end_date,
+        Talentgrade_id=grade_id 
     )
     db.add(model_item)
     db.commit()
     db.refresh(model_item)
 
-    return {
-        "id": model_item.id,
-        "name": model_item.name,
-        # "icon": model_item.icon_path,  
-        "category_id": model_item.category_id,
-        "description": model_item.description,
-        # "grade": model_item.grade,
-        "start_date": model_item.start_date,
-        "end_date": model_item.end_date
-    }
+    return model_item
 
 
 
@@ -207,20 +200,24 @@ async def update_category(
 
 
 
-@router.put("/update-sub-category/{sub_category_id}")
+@router.put("/update-sub-category/{sub_category_id}",response_model=SubCategoryResponse)
 async def update_sub_category(
     sub_category_id: int,
     name: Optional[str] = Form(None, description="Updated name of the subcategory"),
     category_id: Optional[int] = Form(None, description="Updated parent category ID"),
     description: Optional[str] = Form(None, description="Updated description"),
     icon: Optional[UploadFile] = File(None, description="Updated icon file"),
-    start_date: Optional[str] = Form(None, description="Updated start date",alias="startDate"),
-    end_date: Optional[str] = Form(None, description="Updated end date",alias="endDate"),
+    start_date: Optional[str] = Form(None, description="Updated start date"),
+    end_date: Optional[str] = Form(None, description="Updated end date"),
+
+    grade_id: Optional[int] = Form(None, alias="grade"),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     # Fetch existing subcategory
-    sub_category = db.query(SubCategory).filter(SubCategory.id == sub_category_id).first()
+    sub_category = db.query(SubCategory).options(
+        joinedload(SubCategory.talent_grade)
+    ).filter(SubCategory.id == sub_category_id).first()
     if not sub_category:
         raise HTTPException(status_code=404, detail="SubCategory not found")
 
@@ -249,27 +246,21 @@ async def update_sub_category(
         sub_category.category_id = category_id
     if description is not None:
         sub_category.description = description
+    if start_date is not None:
+        sub_category.start_date = start_date
+    if end_date is not None:
+        sub_category.end_date = end_date
+    if grade_id is not None:
+        sub_category.Talentgrade_id = grade_id
 
     # Handle icon update
     if icon:
         filename = save_uploaded_file(UPLOAD_SUB_CATEGORY_DIR, icon, prefix=sub_category.name)
         sub_category.icon = filename
-    if start_date is not None:
-        sub_category.start_date = start_date
-    if end_date is not None:
-        sub_category.end_date = end_date
     db.commit()
     db.refresh(sub_category)
 
-    return {
-        "id": sub_category.id,
-        "name": sub_category.name,
-        "icon": sub_category.icon_path,
-        "category_id": sub_category.category_id,
-        "description": sub_category.description,
-        "start_date": sub_category.start_date,
-        "end_date": sub_category.end_date
-    }
+    return sub_category
 
 
 @router.delete("/delete-category/{category_id}")
