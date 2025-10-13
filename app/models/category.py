@@ -1,9 +1,12 @@
+from typing import Optional,List
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
-
+from app.models.category_type import CategoryTypeResponse
+from app.models.subcategory import SubCategoryResponse
 from app.database.connection import Base
-from pydantic import BaseModel
+from pydantic import BaseModel, computed_field
 
+from app.models.category_type import CategoryTypeResponse
 from app.models.user import UserResponse
 from app.utils.common import CATEGORY_MEDIA_FOLDER
 
@@ -47,12 +50,15 @@ class CategoryCreate(BaseModel):
 class CategoryResponse(BaseModel):
     id: int
     name: str
-    icon: str
+    icon: Optional[str] = None
     is_future: int
-    type: int
+    # type: int
+    category_type: Optional[CategoryTypeResponse] = None # This is optional
+    subcategories: List[SubCategoryResponse] = []
 
+    @computed_field
     @property
-    def icon_url(self):
+    def icon_url(self)-> Optional[str]:
         if self.icon:
             return f"{CATEGORY_MEDIA_FOLDER}{self.icon}"
         return None

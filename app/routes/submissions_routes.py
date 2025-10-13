@@ -1,6 +1,7 @@
 import uuid
 from typing import Optional
 import os
+import ffmpeg
 from PIL import Image
 from fastapi import APIRouter, Depends, HTTPException, Form, File, UploadFile, Query
 from sqlalchemy.exc import SQLAlchemyError
@@ -101,30 +102,85 @@ async def create_submission(
     # Prepare the media filename and directory
     media_filename = None
     if media_file:
-        category_folder = "images" if category_type == "image" else "videos" if category_type == "video" else "audios"
-        category_folder_path = os.path.join(UPLOAD_DIR, category_folder)
-        os.makedirs(category_folder_path, exist_ok=True)
-
         file_extension = media_file.filename.split('.')[-1]
-        unique_filename = f"{uuid.uuid4()}.{file_extension}"
-        file_path = os.path.join(category_folder_path, unique_filename)
-        # return unique_filename
-        # Save the file
-        content = await media_file.read()
-        with open(file_path, "wb") as f:
-            f.write(content)
+        unique_id = uuid.uuid4()
+        
+        # --- MODIFICATION: Start of new file processing and compression logic ---
 
-        # Validate image file
         if category_type == "image":
+            category_folder = "images"
+            category_folder_path = os.path.join(UPLOAD_DIR, category_folder)
+            os.makedirs(category_folder_path, exist_ok=True)
+            
+            # We'll save as .jpg for consistent compression
+            unique_filename = f"{unique_id}.jpg" 
+            file_path = os.path.join(category_folder_path, unique_filename)
+            
             try:
-                img = Image.open(file_path)
-                img.load()
-            except Exception:
-                os.remove(file_path)
-                raise HTTPException(status_code=400, detail="Uploaded file is not a valid image")
+                img = Image.open(media_file.file)
+                # Convert to RGB if it's PNG with transparency
+                if img.mode in ("RGBA", "P"):
+                    img = img.convert("RGB")
+                # Save with compression
+                img.save(file_path, 'jpeg', optimize=True, quality=85) 
+                media_filename = unique_filename
+            except Exception as e:
+                print(e)
+                raise HTTPException(status_code=400, detail="Uploaded file is not a valid or corrupt image.")
 
-        media_filename = unique_filename
-
+        elif category_type in ["video", "audio"]:
+            # For video/audio, we save the original first, then compress it with ffmpeg
+            temp_dir = os.path.join(UPLOAD_DIR, "temp")
+            os.makedirs(temp_dir, exist_ok=True)
+            
+            # 1. Save the original uploaded file temporarily
+            temp_file_path = os.path.join(temp_dir, f"{unique_id}_original.{file_extension}")
+            with open(temp_file_path, "wb") as f:
+                content = await media_file.read()
+                f.write(content)
+            
+            # 2. Define output path and filename
+            if category_type == "video":
+                category_folder = "videos"
+                unique_filename = f"{unique_id}.mp4" # Standardize to mp4
+            else: # audio
+                category_folder = "audios"
+                unique_filename = f"{unique_id}.mp3" # Standardize to mp3
+                
+            category_folder_path = os.path.join(UPLOAD_DIR, category_folder)
+            os.makedirs(category_folder_path, exist_ok=True)
+            compressed_file_path = os.path.join(category_folder_path, unique_filename)
+            
+            # 3. Run FFmpeg for compression
+            try:
+                if category_type == "video":
+                    ffmpeg.input(temp_file_path).output(
+                        compressed_file_path,
+                        vcodec='libx264', # Standard video codec
+                        crf=23,          # Constant Rate Factor (lower is higher quality), 23 is a good default
+                        preset='medium', # Encoding speed vs. compression ratio
+                        acodec='aac',    # Standard audio codec
+                        audio_bitrate='128k'       # Audio bitrate
+                    ).run(capture_stdout=True, capture_stderr=True, overwrite_output=True)
+                else: # audio
+                    ffmpeg.input(temp_file_path).output(
+                        compressed_file_path,
+                        acodec='libmp3lame', # Good quality mp3 codec
+                        audio_bitrate='128k',           # Audio bitrate
+                        ar=44100             # Standard sample rate
+                    ).run(capture_stdout=True, capture_stderr=True, overwrite_output=True)
+                
+                media_filename = unique_filename
+            except ffmpeg.Error as e:
+                print('stdout:', e.stdout.decode('utf8'))
+                print('stderr:', e.stderr.decode('utf8'))
+                # If compression fails, clean up the temp file
+                os.remove(temp_file_path)
+                raise HTTPException(status_code=500, detail=f"Error processing {category_type} file.")
+            finally:
+                # 4. Clean up the original temporary file
+                if os.path.exists(temp_file_path):
+                    os.remove(temp_file_path)
     # Get the user ID of the current user
     created_by = user.id
 

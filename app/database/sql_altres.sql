@@ -113,3 +113,31 @@ ALTER TABLE `users` ADD `is_active` INT NOT NULL DEFAULT '1' AFTER `is_verified`
 
 -- 02-09-2025
 ALTER TABLE `sub_categories` ADD `description` TEXT NULL DEFAULT NULL AFTER `category_id`;
+
+
+-- 11-09-2025
+ALTER TABLE `sub_categories` 
+-- ADD `grade` VARCHAR(255) NULL DEFAULT NULL AFTER `description`,
+ADD `start_date` DATETIME NULL DEFAULT NULL AFTER `description`,
+ADD `end_date` DATETIME NULL DEFAULT NULL AFTER `start_date`;
+
+--7-10-2025
+CREATE TABLE `Talentgrade_id` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL, -- This will store "1-3", "4-6", etc.
+  `grades_array` JSON NOT NULL,        -- This will store the array [1, 2, 3]
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+-- 2. Populate the table with the required data
+INSERT INTO `Talentgrade_id` (`name`, `grades_array`) VALUES 
+('1-3', '[1, 2, 3]'),
+('4-6', '[4, 5, 6]'),
+('7-10', '[7, 8, 9, 10]');
+
+-- 3. Add a foreign key column to your sub_categories table
+-- This links a sub-category to one of these new grade groups.
+
+ALTER TABLE `sub_categories` 
+ADD COLUMN `Talentgrade_id` INT NULL,
+ADD FOREIGN KEY (`Talentgrade_id`) REFERENCES `Talentgrades`(`id`);
