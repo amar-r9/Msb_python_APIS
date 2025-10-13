@@ -8,7 +8,7 @@ from app.models.category_type import CategoryTypeResponse
 from app.database.connection import get_db
 
 router = APIRouter(
-    prefix="/category-types",
+    # prefix="/category-types",
     # tags=["Category Types"]
 )
 
