@@ -9,7 +9,7 @@ from typing import List
 
 # --- SQLAlchemy Model ---
 class TalentGrade(Base):
-    __tablename__ = 'Talentgrades' # Using singular 'TalentGrade' for the class name
+    __tablename__ = 'talentgrades' # Using singular 'TalentGrade' for the class name
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
     grades_array = Column(JSON)
