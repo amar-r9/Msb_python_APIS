@@ -5,8 +5,33 @@
 
 Live API is : https://msb.instabee.pro/docs
 
+#ubuntu 
+
+sudo apt update
+sudo apt install -y build-essential cmake pkg-config libcairo2-dev
+
+sudo apt install -y build-essential cmake pkg-config libcairo2-dev libgirepository1.0-dev python3-gi python3-gi-cairo gir1.2-gtk-3.0
+sudo apt install -y libcups2-dev libacl1-dev build-essential python3-dev pkg-config libsystemd-dev
+
+
+pip install --upgrade pip setuptools wheel
+
+
+
+
+
+
+pip freeze > requirements.txt
+
+pip install -r requirements.txt
+
 
 run aplication 
+
+sudo systemctl daemon-reload
+
+sudo systemctl enable fastapi.service
+sudo systemctl start fastapi.service
 
 uvicorn app.main:app --host 0.0.0.0 --port 8000
 
