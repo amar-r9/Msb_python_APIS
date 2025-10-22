@@ -122,7 +122,7 @@ ADD `start_date` DATETIME NULL DEFAULT NULL AFTER `description`,
 ADD `end_date` DATETIME NULL DEFAULT NULL AFTER `start_date`;
 
 --7-10-2025
-CREATE TABLE `Talentgrade_id` (
+CREATE TABLE `talentgrades` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NOT NULL, -- This will store "1-3", "4-6", etc.
   `grades_array` JSON NOT NULL,        -- This will store the array [1, 2, 3]
@@ -130,7 +130,7 @@ CREATE TABLE `Talentgrade_id` (
 ) ENGINE=InnoDB;
 
 -- 2. Populate the table with the required data
-INSERT INTO `Talentgrade_id` (`name`, `grades_array`) VALUES 
+INSERT INTO `talentgrades` (`name`, `grades_array`) VALUES 
 ('1-3', '[1, 2, 3]'),
 ('4-6', '[4, 5, 6]'),
 ('7-10', '[7, 8, 9, 10]');
@@ -140,4 +140,4 @@ INSERT INTO `Talentgrade_id` (`name`, `grades_array`) VALUES
 
 ALTER TABLE `sub_categories` 
 ADD COLUMN `Talentgrade_id` INT NULL,
-ADD FOREIGN KEY (`Talentgrade_id`) REFERENCES `Talentgrades`(`id`);
+ADD FOREIGN KEY (`Talentgrade_id`) REFERENCES `talentgrades`(`id`);
