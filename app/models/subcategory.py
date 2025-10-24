@@ -47,7 +47,6 @@ class SubCategoryCreate(BaseModel):
     start_date: Optional[datetime.datetime] = None
     end_date: Optional[datetime.datetime] = None
 
-
 # Pydantic Model for response with ORM mode enabled
 class SubCategoryResponse(BaseModel):
     id: int

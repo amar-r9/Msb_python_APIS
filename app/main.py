@@ -42,10 +42,11 @@ app.mount("/static/media/submissions", StaticFiles(directory="static/media/submi
 
 templates = Jinja2Templates(directory="templates")
 
+origins = ["http://localhost:5173", "http://127.0.0.1:5173"]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Update with specific origins in production
+    allow_origins=origins,  # Update with specific origins in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

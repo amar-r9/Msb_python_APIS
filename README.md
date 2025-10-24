@@ -32,4 +32,7 @@ monishvd@gmail.com
 
 sudo systemctl restart mysqld
 
+
+sudo systemctl restart fastapi.service
+
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJyYWphZ29uZGFAaG90bWFpbC5jb20iLCJleHAiOjE3Mzc4Mzk1Nzd9.OWKBFEKhF-pghXZ1nuUVUodx60Qnkgz8b419IIvVTXk
