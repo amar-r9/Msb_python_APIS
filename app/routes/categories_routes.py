@@ -9,7 +9,7 @@ from app.models.category import CategoryResponse, CategoryCreate, Category
 from app.models.subcategory import SubCategoryCreate, SubCategory, SubCategoryResponse
 from app.services.auth import get_current_user
 from app.services.category import create_category_by_data, get_category_by_id, \
-    get_all_category_paginated, get_all_sub_category_paginated, get_all_categories, create_sub_category_by_data
+    get_all_category_paginated, get_all_sub_category_paginated, get_all_categories, create_sub_category_by_data, get_grade_based_sub_category
 from app.models.user import User
 from app.utils.common import save_uploaded_file
 
@@ -149,6 +149,36 @@ def get_quiz_sub_categories(
         # "current_user": current_user,
         "data": data
     }
+
+
+
+
+
+@router.get("/get-app-sub-categories")
+def get_sub_catergory_by_id_app(
+    category_id: int = Query('', ge=1, description="category id"),
+    page: int = Query(1, ge=1, description="Page number (starts from 1)"),
+    limit: int = Query(10, ge=1, le=100, description="Number of users per page (max 100)"),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    user_id = current_user['id']
+    data, total = get_grade_based_sub_category(db, category_id,page, limit,user_id)
+    message = "" 
+    if total == 0:
+        message = "No subcategories found for your grade in this category."
+
+    return {
+        "page": page,
+        "limit": limit,
+        "total": total,
+        "total_pages": (total // limit) + (1 if total % limit > 0 else 0),
+        "current_user": current_user,
+        "data": data,
+        "message": message
+    }
+
+
 
 
 

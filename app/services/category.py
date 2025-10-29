@@ -1,10 +1,12 @@
 from typing import Type
 
+from sqlalchemy import text
 from sqlalchemy.orm import Session, joinedload, selectinload
 
 from app.database.connection import get_db
 from app.models.category import CategoryCreate, Category, CategoryResponse
 from app.models.subcategory import SubCategory, SubCategoryCreate
+from app.models.submission import Submission
 from app.models.student import Student, StudentCreate
 from app.models.user import User
 from app.utils.common import hash_password, BASE_URL, CATEGORY_MEDIA_FOLDER
@@ -136,7 +138,7 @@ def get_future_categories(db: Session):
 def get_all_sub_category_paginated(db: Session, category_id: int, page: int, limit: int):
     offset = (page - 1) * limit
 
-    # Apply pagination with OFFSET and LIMIT
+    
     items = (db.query(SubCategory)
              .filter(SubCategory.category_id == category_id)
              .offset(offset)
@@ -154,4 +156,92 @@ def get_all_sub_category_paginated(db: Session, category_id: int, page: int, lim
 
     total = db.query(SubCategory).filter(SubCategory.category_id == category_id).offset(offset).limit(limit).count()
 
+    return items, total
+
+
+def get_grade_based_sub_category(
+    db: Session, 
+    category_id: int, 
+    page: int, 
+    limit: int, 
+    user_id: int
+):
+    
+    offset = (page - 1) * limit
+
+    # --- Query 1: Get the TOTAL count of matching subcategories ---
+    # This query finds the total number of items for pagination
+    # *before* applying any limit or offset.
+    
+    total_query_sql = text("""
+        SELECT
+            COUNT(DISTINCT sc.id)
+        FROM
+            sub_categories sc 
+        JOIN
+            talentgrades t ON sc.Talentgrade_id = t.id 
+        JOIN
+            students s ON JSON_CONTAINS(t.grades_array, s.grade_id)
+        WHERE
+            sc.category_id = :category_id
+            AND s.user_id = :user_id;
+    """)
+    
+    # Execute the count query
+    total_result = db.execute(
+        total_query_sql, 
+        {"category_id": category_id, "user_id": user_id}
+    )
+    total = total_result.scalar_one_or_none() or 0
+    
+    if total == 0:
+        return [], 0 # No items match, return early
+
+    # --- Query 2: Get the DATA for the current page ---
+    # This is your SQL query, now with LIMIT and OFFSET for pagination.
+    
+    data_query_sql = text("""
+        SELECT
+            sc.* FROM
+            sub_categories sc 
+        JOIN
+            talentgrades t ON sc.Talentgrade_id = t.id 
+        JOIN
+            students s ON JSON_CONTAINS(t.grades_array, s.grade_id)
+        WHERE
+            sc.category_id = :category_id
+            AND s.user_id = :user_id
+        GROUP BY
+            sc.id
+        LIMIT :limit OFFSET :offset;
+    """)
+    
+    # This is the "hybrid" part. We run raw SQL, but map the results
+    # back to your SubCategory model.
+    items = db.query(SubCategory).from_statement(data_query_sql).params(
+        category_id=category_id, 
+        user_id=user_id, 
+        limit=limit, 
+        offset=offset
+    ).all()
+
+
+
+    #checkign the subcategory submissions and making sure the the user has not submitted already
+
+    subcategory_ids_on_page = [item.id for item in items]
+
+    submitted_rows = db.query(Submission.sub_category_id).filter(
+        Submission.created_by == user_id,
+        Submission.sub_category_id.in_(subcategory_ids_on_page)
+    )
+
+
+    submitted_set = {row[0] for row in submitted_rows}
+
+
+    # This part still works because 'items' is a list of SubCategory objects
+    for item in items:
+        item.icon_url = item.icon_path
+        item.isSubmitted = item.id in submitted_set
     return items, total

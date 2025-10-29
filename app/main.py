@@ -93,6 +93,7 @@ app.include_router(student_routes.router, prefix="/student", tags=["Students"])
 app.include_router(categories_routes.router, prefix="/category", tags=["Categories"]) 
 app.include_router(category_type_routes.router, prefix="/category-types", tags=["Category Types"]) 
 app.include_router(submissions_routes.router, prefix="/submission", tags=["Submissions"])
+
 app.include_router(school_routes.router, prefix="/school", tags=["School"])
 app.include_router(quiz_routes.router, prefix="/quiz", tags=["Quiz"])
 app.include_router(quiz_questions_routes.router, prefix="/quiz_questions", tags=["QuizQuestions"])
