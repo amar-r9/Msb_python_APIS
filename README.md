@@ -32,6 +32,7 @@ sudo systemctl daemon-reload
 
 sudo systemctl enable fastapi.service
 sudo systemctl start fastapi.service
+sudo systemctl restart fastapi.service
 
 uvicorn app.main:app --host 0.0.0.0 --port 8000
 

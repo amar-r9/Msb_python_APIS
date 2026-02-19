@@ -7,22 +7,23 @@ from email.message import EmailMessage
 from random import random
 
 import aiosmtplib
+import bcrypt
 from fastapi import UploadFile
 from fastapi_mail import MessageSchema, FastMail, ConnectionConfig
 from jinja2 import Environment, FileSystemLoader
 from jose import jwt
-from passlib.context import CryptContext
+# from passlib.context import CryptContext
 from pydantic import BaseModel, EmailStr
 
 from app.config.settings import settings
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
+    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
+    return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
 
 BASE_URL = f"{settings.APP_URL}/static"
 SUBMISSIONS_MEDIA_FOLDER = f"{BASE_URL}/media/submissions/"
