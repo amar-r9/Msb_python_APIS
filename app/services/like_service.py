@@ -4,7 +4,7 @@ from sqlalchemy import desc, func
 from sqlalchemy.orm import Session, joinedload
 
 from app.config.settings import settings
-from app.database.connection import get_db
+from app.database.connection import get_db, SessionLocal
 from app.models import Submission, UserPoint, Comment
 from app.models.model_likes import Like
 from app.models.user import User
@@ -214,37 +214,36 @@ def update_points_to_user(user_id: int):
 
 
 def get_likes_from_submission(submission_id: int):
-    db: Session = next(get_db())
-
-    # Count the number of likes for the given submission
-    existing_like_count_by_submission = (
-        db.query(Like)
-        .filter(Like.submission_id == submission_id)
-        .count()
-    )
+    with SessionLocal() as db:
+        # Count the number of likes for the given submission
+        existing_like_count_by_submission = (
+            db.query(Like)
+            .filter(Like.submission_id == submission_id)
+            .count()
+        )
 
     return existing_like_count_by_submission
-def get_comment_from_submission(submission_id: int):
-    db: Session = next(get_db())
 
-    # Count the number of likes for the given submission
-    existing_comment_count_by_submission = (
-        db.query(Comment)
-        .filter(Comment.submission_id == submission_id)
-        .count()
-    )
+
+def get_comment_from_submission(submission_id: int):
+    with SessionLocal() as db:
+        # Count the number of likes for the given submission
+        existing_comment_count_by_submission = (
+            db.query(Comment)
+            .filter(Comment.submission_id == submission_id)
+            .count()
+        )
 
     return existing_comment_count_by_submission
 
 
 def get_is_liked_from_submission_and_user(submission_id: int, user_id: int):
-    db: Session = next(get_db())
-
-    # Check if the user has liked the submission
-    existing_like_by_user = (
-        db.query(Like)
-        .filter(Like.submission_id == submission_id, Like.user_id == user_id)
-        .first()  # Use first() to check existence
-    )
+    with SessionLocal() as db:
+        # Check if the user has liked the submission
+        existing_like_by_user = (
+            db.query(Like)
+            .filter(Like.submission_id == submission_id, Like.user_id == user_id)
+            .first()  # Use first() to check existence
+        )
 
     return existing_like_by_user is not None  # True if exists, False if not

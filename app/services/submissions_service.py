@@ -501,8 +501,7 @@ def formart_submission(submission, user: Optional[User] = None):
         return submission
 
     if  submission.user and submission.user.image:
-        if submission.user.password:
-            del submission.user.password
+
         submission.user.image_url = submission.user.image_path
 
     submission.media_url = submission.media_path
