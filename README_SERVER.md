@@ -64,6 +64,7 @@ WantedBy=multi-user.target
 sudo systemctl daemon-reload
 sudo systemctl enable fastapi
 sudo systemctl start fastapi
+sudo systemctl restart fastapi
 
 sudo nano /etc/nginx/sites-available/service.mysuperbrain.com
 
