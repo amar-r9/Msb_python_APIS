@@ -31,9 +31,11 @@ from app.utils.common import hash_password, BASE_URL, USER_PROFILES_MEDIA_FOLDER
 UPLOAD_USER_PROFILES_DIR = "static/media/user_profile_images/"
 os.makedirs(UPLOAD_USER_PROFILES_DIR, exist_ok=True)
 MAX_IMAGE_SIZE = 5 * 1024 * 1024  # 5 MB
-ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png"}  # Allowed MIME types
+ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/jpg", "image/heic", "image/heif"}  # Allowed MIME types
 
 from PIL import Image  # For validating image files
+import pillow_heif
+pillow_heif.register_heif_opener()
 
 
 
@@ -165,20 +167,21 @@ async def update_profile(
                 )
 
             # Generate a custom file name
-            file_extension = profile_image.filename.split(".")[-1]
-            custom_file_name = f"{uuid4().hex}.{file_extension}"
+            custom_file_name = f"{uuid4().hex}.jpg"  # standardize to .jpg
             file_path = os.path.join(UPLOAD_USER_PROFILES_DIR, custom_file_name)
 
-            # Save the image to the upload directory
-            with open(file_path, "wb") as buffer:
-                buffer.write(await profile_image.read())
-
-            # Optionally validate the image file using PIL
             try:
-                Image.open(file_path).verify()
-            except Exception:
-                os.remove(file_path)  # Remove invalid file
-                raise HTTPException(status_code=400, detail="Uploaded file is not a valid image")
+                # Open with PIL (pillow_heif handles heic)
+                img = Image.open(profile_image.file)
+                # Convert to RGB to ensure jpeg compat
+                if img.mode in ("RGBA", "P"):
+                    img = img.convert("RGB")
+                    
+                # Save as jpeg
+                img.save(file_path, 'jpeg', optimize=True, quality=85)
+            except Exception as e:
+                print(e)
+                raise HTTPException(status_code=400, detail="Uploaded file is not a valid or corrupt image")
 
             # Update user profile with image path
             user.image = custom_file_name

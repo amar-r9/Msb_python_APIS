@@ -12,6 +12,9 @@ from fastapi import UploadFile
 from fastapi_mail import MessageSchema, FastMail, ConnectionConfig
 from jinja2 import Environment, FileSystemLoader
 from jose import jwt
+from PIL import Image
+import pillow_heif
+pillow_heif.register_heif_opener()
 # from passlib.context import CryptContext
 from pydantic import BaseModel, EmailStr
 
@@ -142,11 +145,29 @@ def save_uploaded_file(upload_dir: str, upload_file: UploadFile, prefix: str) ->
 
     # extract extension only (.png, .jpg etc)
     _, ext = os.path.splitext(upload_file.filename)
-
-    # generate new file name
     timestamp = int(time.time())
-    new_filename = f"{prefix}_{timestamp}{ext}"
 
+    # Safely handle iPhone image formats
+    if upload_file.content_type and upload_file.content_type.startswith("image/"):
+        ext_lower = ext.lower()
+        if ext_lower in [".heic", ".heif"]:
+            ext = ".jpg"
+        
+        new_filename = f"{prefix}_{timestamp}{ext}"
+        file_path = os.path.join(upload_dir, new_filename)
+        
+        try:
+            img = Image.open(upload_file.file)
+            if ext.lower() in [".jpg", ".jpeg"] and img.mode in ("RGBA", "P"):
+                img = img.convert("RGB")
+            img.save(file_path)
+            return new_filename
+        except Exception:
+            # Fall back to raw byte copy if PIL fails (e.g. non-image or weird encoding)
+            upload_file.file.seek(0)
+    
+    # generate new file name
+    new_filename = f"{prefix}_{timestamp}{ext}"
     file_path = os.path.join(upload_dir, new_filename)
 
     with open(file_path, "wb") as buffer:

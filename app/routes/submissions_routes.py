@@ -2,7 +2,10 @@ import uuid
 from typing import Optional
 import os
 import ffmpeg
+import PIL
 from PIL import Image
+import pillow_heif
+pillow_heif.register_heif_opener()
 from fastapi import APIRouter, Depends, HTTPException, Form, File, UploadFile, Query
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session, joinedload
@@ -73,25 +76,21 @@ async def create_submission(
     if category_type == "image":
         if media_file is None:
             raise HTTPException(status_code=400, detail="Image file is required for this category")
-        if media_file.content_type not in ["image/jpeg", "image/png", "image/jpg"]:
+        if media_file.content_type not in ["image/jpeg", "image/png", "image/jpg", "image/heic", "image/heif"]:
             raise HTTPException(status_code=400,
-                                detail="Invalid file type for image category. Only jpg, png are allowed.")
+                                detail="Invalid file type for image category. Only jpg, png, heic are allowed.")
         if file_size > MAX_IMAGE_SIZE:
             raise HTTPException(status_code=400, detail="Image file exceeds the maximum size limit of 5MB.")
     elif category_type == "video":
         if media_file is None:
             raise HTTPException(status_code=400, detail="Video file is required for this category")
-        if media_file.content_type not in ["video/mp4", "video/quicktime"]:
-            raise HTTPException(status_code=400,
-                                detail="Invalid file type for video category. Only mp4, quicktime are allowed.")
+        # Removed strict content type validation to accept any format; FFmpeg will convert to mp4
         if file_size > MAX_VIDEO_SIZE:
             raise HTTPException(status_code=400, detail="Video file exceeds the maximum size limit of 50MB.")
     elif category_type == "audio":
         if media_file is None:
             raise HTTPException(status_code=400, detail="Audio file is required for this category")
-        if media_file.content_type not in ["audio/mpeg", "audio/wav"]:
-            raise HTTPException(status_code=400,
-                                detail="Invalid file type for audio category. Only mp3, wav are allowed.")
+        # Removed strict content type validation to accept any format; FFmpeg will convert to mp3
         if file_size > MAX_AUDIO_SIZE:
             raise HTTPException(status_code=400, detail="Audio file exceeds the maximum size limit of 10MB.")
     elif category_type == "text":
@@ -160,7 +159,9 @@ async def create_submission(
                         crf=23,          # Constant Rate Factor (lower is higher quality), 23 is a good default
                         preset='medium', # Encoding speed vs. compression ratio
                         acodec='aac',    # Standard audio codec
-                        audio_bitrate='128k'       # Audio bitrate
+                        audio_bitrate='128k',       # Audio bitrate
+                        pix_fmt='yuv420p',          # Pixel format for maximum compatibility
+                        movflags='faststart'        # Enable fast start for web playback
                     ).run(capture_stdout=True, capture_stderr=True, overwrite_output=True)
                 else: # audio
                     ffmpeg.input(temp_file_path).output(
