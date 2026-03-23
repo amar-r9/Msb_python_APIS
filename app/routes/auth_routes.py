@@ -26,11 +26,12 @@ from fastapi import HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer
 
 from app.utils.common import hash_password, BASE_URL, USER_PROFILES_MEDIA_FOLDER
+from app.config.settings import settings
 
 
 UPLOAD_USER_PROFILES_DIR = "static/media/user_profile_images/"
 os.makedirs(UPLOAD_USER_PROFILES_DIR, exist_ok=True)
-MAX_IMAGE_SIZE = 5 * 1024 * 1024  # 5 MB
+MAX_IMAGE_SIZE = settings.MAX_IMAGE_SIZE * 1024 * 1024  # from MB to bytes
 ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/jpg", "image/heic", "image/heif"}  # Allowed MIME types
 
 from PIL import Image  # For validating image files
@@ -164,6 +165,16 @@ async def update_profile(
                 raise HTTPException(
                     status_code=400,
                     detail=f"Invalid image type. Allowed types: {', '.join(ALLOWED_IMAGE_TYPES)}",
+                )
+
+            # Validate file size
+            profile_image.file.seek(0, os.SEEK_END)
+            file_size = profile_image.file.tell()
+            profile_image.file.seek(0)
+            if file_size > MAX_IMAGE_SIZE:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Image file exceeds the maximum size limit of {settings.MAX_IMAGE_SIZE}MB."
                 )
 
             # Generate a custom file name

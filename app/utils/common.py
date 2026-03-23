@@ -8,7 +8,7 @@ from random import random
 
 import aiosmtplib
 import bcrypt
-from fastapi import UploadFile
+from fastapi import UploadFile, HTTPException
 from fastapi_mail import MessageSchema, FastMail, ConnectionConfig
 from jinja2 import Environment, FileSystemLoader
 from jose import jwt
@@ -141,6 +141,22 @@ def generate_verification_token(email: str):
 
 
 def save_uploaded_file(upload_dir: str, upload_file: UploadFile, prefix: str) -> str:
+    upload_file.file.seek(0, os.SEEK_END)
+    file_size = upload_file.file.tell()
+    upload_file.file.seek(0)
+    
+    content_type = upload_file.content_type or ""
+    
+    if content_type.startswith("image/"):
+        if file_size > settings.MAX_IMAGE_SIZE * 1024 * 1024:
+            raise HTTPException(status_code=400, detail=f"Image file exceeds the maximum size limit of {settings.MAX_IMAGE_SIZE}MB.")
+    elif content_type.startswith("video/"):
+        if file_size > settings.MAX_VIDEO_SIZE * 1024 * 1024:
+            raise HTTPException(status_code=400, detail=f"Video file exceeds the maximum size limit of {settings.MAX_VIDEO_SIZE}MB.")
+    elif content_type.startswith("audio/"):
+        if file_size > settings.MAX_AUDIO_SIZE * 1024 * 1024:
+            raise HTTPException(status_code=400, detail=f"Audio file exceeds the maximum size limit of {settings.MAX_AUDIO_SIZE}MB.")
+
     os.makedirs(upload_dir, exist_ok=True)
 
     # extract extension only (.png, .jpg etc)

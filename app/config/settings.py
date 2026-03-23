@@ -24,6 +24,10 @@ class Settings(BaseSettings):
     SMTP_PASSWORD :str = "Ikonos@123"
     SENDER_EMAIL :str = "mysuperbrain@ikonostechnologies.com"
 
+    MAX_IMAGE_SIZE: int = 20
+    MAX_VIDEO_SIZE: int = 100
+    MAX_AUDIO_SIZE: int = 50
+
     class Config:
         env_file = ".env"
 

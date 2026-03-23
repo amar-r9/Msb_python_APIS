@@ -31,10 +31,10 @@ router = APIRouter()
 UPLOAD_DIR = "static/media/submissions/"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
-# Max file size limits in bytes
-MAX_IMAGE_SIZE = 5 * 1024 * 1024  # 5 MB
-MAX_VIDEO_SIZE = 50 * 1024 * 1024  # 50 MB
-MAX_AUDIO_SIZE = 10 * 1024 * 1024  # 10 MB
+# Max file size limits in bytes - now sourced from settings
+MAX_IMAGE_SIZE = settings.MAX_IMAGE_SIZE * 1024 * 1024  # from MB to bytes
+MAX_VIDEO_SIZE = settings.MAX_VIDEO_SIZE * 1024 * 1024  # from MB to bytes
+MAX_AUDIO_SIZE = settings.MAX_AUDIO_SIZE * 1024 * 1024  # from MB to bytes
 
 
 @router.post("/create")
@@ -80,19 +80,19 @@ async def create_submission(
             raise HTTPException(status_code=400,
                                 detail="Invalid file type for image category. Only jpg, png, heic are allowed.")
         if file_size > MAX_IMAGE_SIZE:
-            raise HTTPException(status_code=400, detail="Image file exceeds the maximum size limit of 5MB.")
+            raise HTTPException(status_code=400, detail=f"Image file exceeds the maximum size limit of {settings.MAX_IMAGE_SIZE}MB.")
     elif category_type == "video":
         if media_file is None:
             raise HTTPException(status_code=400, detail="Video file is required for this category")
         # Removed strict content type validation to accept any format; FFmpeg will convert to mp4
         if file_size > MAX_VIDEO_SIZE:
-            raise HTTPException(status_code=400, detail="Video file exceeds the maximum size limit of 50MB.")
+            raise HTTPException(status_code=400, detail=f"Video file exceeds the maximum size limit of {settings.MAX_VIDEO_SIZE}MB.")
     elif category_type == "audio":
         if media_file is None:
             raise HTTPException(status_code=400, detail="Audio file is required for this category")
         # Removed strict content type validation to accept any format; FFmpeg will convert to mp3
         if file_size > MAX_AUDIO_SIZE:
-            raise HTTPException(status_code=400, detail="Audio file exceeds the maximum size limit of 10MB.")
+            raise HTTPException(status_code=400, detail=f"Audio file exceeds the maximum size limit of {settings.MAX_AUDIO_SIZE}MB.")
     elif category_type == "text":
         media_file = None
     elif category_type == "quiz":

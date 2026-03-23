@@ -19,10 +19,7 @@ router = APIRouter()
 UPLOAD_DIR = "static/media/submissions/"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
-# Max file size limits in bytes
-MAX_IMAGE_SIZE = 5 * 1024 * 1024  # 5 MB
-MAX_VIDEO_SIZE = 50 * 1024 * 1024  # 50 MB
-MAX_AUDIO_SIZE = 10 * 1024 * 1024  # 10 MB
+
 
 
 
